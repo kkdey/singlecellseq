@@ -6,6 +6,9 @@ library(optimx)
 library(gtools)
 library(parallel)
 library(lineprof)
+library(lme4)
+library(permute)
+library(BioPhysConnectoR)
 
 #######  Source the important files
 
@@ -24,5 +27,20 @@ source('poisson_topic_loglink.R')
 
 ### apply the main function for the modeling
 
-res <- Poisson_topic.loglink(counts,n_clus=4,lab_batch)
-barplot(t(res$omega),col=2:(K+1),axisnames=F,space=0,border=NA,main=paste("No. of clusters=",k),las=1,ylim=c(0,1),cex.axis=1.5,cex.main=1.4)
+out <- Poisson_topic.loglink(counts,n_clus=4,lab_batch,use_squarem = FALSE)
+
+###
+docweights=out$omega;
+perm_set=rbind(1:K,allPerms(1:K));
+diff=array(0,dim(perm_set)[1]);
+for (p in 1:dim(perm_set)[1])
+{
+  temp=docweights[,perm_set[p,]];
+  diff[p]=fnorm(temp,omega_true);
+}
+
+p_star=which(diff==min(diff));
+docweights=docweights[,perm_set[p_star,]];
+
+barplot(t(docweights),col=2:(K+1),axisnames=F,space=0,border=NA,main=paste("No. of clusters=",k),las=1,ylim=c(0,1),cex.axis=1.5,cex.main=1.4)
+

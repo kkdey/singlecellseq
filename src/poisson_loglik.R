@@ -4,7 +4,7 @@
 omega_loglik_poisson_onesample = function(omega_vec,counts_samp,alpha_mat,beta_mat,lab_batch_sample)
 {
   out <- exp(omega_vec%*%alpha_mat +beta_mat[lab_batch_sample,]);
-  sum_loglik <- sum(unlist(lapply(1:length(counts_samp),function(g) out[g] -counts_samp[g]*log(out[g]))));
+  sum_loglik <- sum(unlist(lapply(1:length(counts_samp),function(g) out[g] -counts_samp[g]*log(out[g]+1e-12))));
   return(sum_loglik);
 }
 
@@ -14,8 +14,6 @@ omega_loglik_poisson_full = function(param_vec_in,counts_vec,n_samples, n_genes,
   param_vec_expr <- param_vec_in[-(1:(n_samples*n_clus))];
   alpha= matrix(param_vec_expr[1:(n_clus*n_genes)],n_clus,n_genes);
   beta = matrix(param_vec_expr[-(1:(n_clus*n_genes))],max(lab_batch),n_genes);
-  
-  counts <- matrix(counts, nrow=n_samples)
   
   out <- sum(unlist(mclapply(1:n_samples, 
                   function(n) omega_loglik_poisson_onesample(omega[n,],counts[n,],alpha,beta,lab_batch[n]),

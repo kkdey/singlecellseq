@@ -23,7 +23,7 @@ for(g in 1:N_genes)
 }
 
 library(gtools)
-T=100;
+T=N_sim/5;
 omega_true=matrix(rbind(rdirichlet(T,c(3,4,2,6)),
                         rdirichlet(T,c(1,4,6,3)),
                         rdirichlet(T,c(4,1,2,2)),
@@ -35,17 +35,18 @@ counts <- simulate_poisson_random_batch(N_sim, N_genes, N_clus, omega_true, alph
 
 
 library(maptpx)
-K=4
-Topic_Clus=topics(counts,K,kill=0,tol=0.005);
+N_clus=4
+Topic_Clus=topics(counts,K,kill=0,tol=0.001);
 docweights_topics=Topic_Clus$omega;
-barplot(t(docweights_topics),col=2:(K+1),axisnames=F,space=0,border=NA,main=paste("No. of clusters=",k),las=1,ylim=c(0,1),cex.axis=1.5,cex.main=1.4)
+barplot(t(docweights_topics),col=2:(N_clus+1),axisnames=F,space=0,border=NA,main=paste("No. of clusters=",N_clus),las=1,ylim=c(0,1),cex.axis=1.5,cex.main=1.4)
 
-barplot(t(omega_true),col=2:(K+1),axisnames=F,space=0,border=NA,main=paste("No. of clusters=",k),las=1,ylim=c(0,1),cex.axis=1.5,cex.main=1.4)
+barplot(t(omega_true),col=2:(N_clus+1),axisnames=F,space=0,border=NA,main=paste("No. of clusters=",N_clus),las=1,ylim=c(0,1),cex.axis=1.5,cex.main=1.4)
 
 
 
 #barplot(t(omega_final),col=2:(K+1),axisnames=F,space=0,border=NA,main=paste("No. of clusters=",k),las=1,ylim=c(0,1),cex.axis=1.5,cex.main=1.4)
 
 
-
+#omega_out <- as.matrix(read.table('omega_temp.txt'));
+#barplot(t(omega_out),col=2:(n_clus+1),axisnames=F,space=0,border=NA,main=paste("No. of clusters=",N_clus),las=1,ylim=c(0,1),cex.axis=1.5,cex.main=1.4)
 
